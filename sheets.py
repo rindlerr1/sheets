@@ -66,6 +66,11 @@ def write(data, sheet_name,worksheet_name,creds):
     data = pd.concat([insert_names, data]).reset_index(drop = True)
     data = data[cols]
     
+
+    #Worksheets need to be able to accomodate all cells that are part of an update or it will fail.
+    #This re-szes the worksheet ahead of the update.
+    worksheet.resize(len(data), len(data.columns))
+    
     #creates a list of all the necessary cells based on the size of the df    
     cell_range = '{col_i}{row_i}:{col_f}{row_f}'.format(
             col_i=chr((0) + ord('A')),    # converts number to letter
@@ -83,10 +88,6 @@ def write(data, sheet_name,worksheet_name,creds):
     for i, val in enumerate(values):  
         cell_list[i].value = val         
 
-    #Worksheets need to be able to accomodate all cells that are part of an update or it will fail.
-    #This re-szes the worksheet ahead of the update.
-    worksheet.resize(len(data), len(data.columns))
-    
 
     #I don't think gspread can't send more than 50,000 cells at once during a multi cell sheet update.
     #This creates bins of 45,000 cells to send off, and when a == len(cell_list) the remaining bin that didn't reach 45,000 cells will be sent
@@ -97,9 +98,9 @@ def write(data, sheet_name,worksheet_name,creds):
             chunk.append(cell_list[i])
             a += 1
             if a == len(cell_list):
-                sheet.update_cells(chunk)            
+                worksheet.update_cells(chunk)            
         elif len(chunk) == 45000:
-            sheet.update_cells(chunk)
+            worksheet.update_cells(chunk)
             chunk = []
             a += 1
             
