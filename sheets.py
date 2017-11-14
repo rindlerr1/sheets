@@ -18,6 +18,14 @@ To be included:
 email: version1@sheet-v1.iam.gserviceaccount.com    
 """
 
+
+def auth(file_path):
+    from oauth2client.service_account import ServiceAccountCredentials
+    scope = ['https://spreadsheets.google.com/feeds']
+    creds = ServiceAccountCredentials.from_json_keyfile_name(file_path, scope)
+    return creds
+
+
 email_message = ["You will need this email to be shared with your google sheet.",
           "email: version1@sheet-v1.iam.gserviceaccount.com"]
 def email():
@@ -25,13 +33,10 @@ def email():
         print(line)
 
 
-def read(sheet_name):
+def read(sheet_name, creds):
     import gspread
-    from oauth2client.service_account import ServiceAccountCredentials
     import pandas as pd
 
-    scope = ['https://spreadsheets.google.com/feeds']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
     client = gspread.authorize(creds)
 
     sheet = client.open(sheet_name).sheet1
@@ -58,13 +63,10 @@ def read(sheet_name):
     return data[col_list] 
 
 
-def write(data, sheet_name):
+def write(data, sheet_name, creds):
     import gspread
-    from oauth2client.service_account import ServiceAccountCredentials
     import pandas as pd
     
-    scope = ['https://spreadsheets.google.com/feeds']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
     client = gspread.authorize(creds)
     sheet = client.open(sheet_name).sheet1
         
