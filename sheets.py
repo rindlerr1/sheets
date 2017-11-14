@@ -34,7 +34,7 @@ def read(sheet_name,worksheet_name,creds):
 
     #gets all data from the worksheet in the form of a dict
     data = worksheet.get_all_records()
-    data = pd.DataFrame.from_dict(data)
+    data = pd.DataFrame.from_dict(data, dtype = float)
     
     #Pandas automatically re-orders columns alphabetically
     #In-order to bring in data in the same format one needs to bring in the row by itself and use it to arrange the df
